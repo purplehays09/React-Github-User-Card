@@ -11,20 +11,40 @@ const userList = [
 ]
 
 class Dashboard extends React.Component{
-    state = {
-        users:[]
+    constructor(){
+        super();
+        this.state = {
+            users:[]
+        }
     }
+    
 
     componentDidMount(){
-      
-        axios.get(`http://api.github.com/users/purplehays09`)
-            .then(res => {
-                console.log(res.data)
-                this.setState({
-                    users:res.data
+
+        userList.map(user => {
+            this.setState(
+                axios.get(`https://api.github.com/users/${user}`)
+                .then(res => {
+                        this.setState({
+                            users:[
+                                ...this.state.users,
+                                res.data
+                            ]
+                        } 
+                    )
                 })
-            })
-            .catch(err => console.log(err))
+                .catch(err => console.log(err))
+            )
+        })
+      
+        // axios.get(`http://api.github.com/users/purplehays09`)
+        //     .then(res => {
+        //         console.log(res.data)
+        //         this.setState({
+        //             users:res.data
+        //         })
+        //     })
+        //     .catch(err => console.log(err))
      
     }
 
@@ -34,10 +54,19 @@ class Dashboard extends React.Component{
                 {this.state.users.login}<br />
                 Dashboard
 
-               <Card
-                    id={this.state.users.login}
-                    user={this.state.users}
-                />
+            {
+                this.state.users.map(user => {
+                    return(
+                        <Card
+                            key={user.id}
+                            id={user.login}
+                            user={user}
+                        />
+                    )
+
+                })
+            }
+               
          
             </div>
         )
